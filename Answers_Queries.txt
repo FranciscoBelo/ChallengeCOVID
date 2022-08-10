@@ -1,0 +1,174 @@
+1. 
+"Brazil"
+
+select * from Cumulativenumberfor14daysofCOVID19casesper100000 
+where year_week = '2020-31' and country is not null
+order by cast(cumulative_count as int) desc
+limit 1
+
+
+2.
+"Anguilla"
+"Montserrat"
+"Greenland"
+"Dominica"
+"Laos"
+"New Caledonia"
+"Grenada"
+"Saint Lucia"
+"Fiji"
+"Belize"
+
+select * from Cumulativenumberfor14daysofCOVID19casesper100000 
+where year_week = '2020-31' 
+order by cast(cumulative_count as int) asc
+limit 10
+
+3.
+"United Kingdom"
+"France"
+"Germany"
+"Netherlands"
+"Canada"
+"Belgium"
+"Japan"
+"Switzerland"
+"Austria"
+"Australia"
+select * 
+	from (	select * from Cumulativenumberfor14daysofCOVID19casesper100000
+		where year_week = '2022-02' and length(gdppercapita)> 0
+		order by cast(gdppercapita as int) desc
+		limit 20
+		) as top10
+order by cast(cumulative_count as int) desc
+limit 10
+
+4.
+
+
+
+5.
+"21688"
+SELECT COUNT(*)
+FROM Cumulativenumberfor14daysofCOVID19casesper100000
+HAVING COUNT(*) > 1
+
+6."Analyze the performance of all the queries and describes what you see. Get improvements
+suggestions."
+
+R : I think it would be nice to create an index on the year week and country column.
+
+
+Query Plans:
+
+
+Qurey 1.
+"Limit  (cost=1443.41..1443.41 rows=1 width=128) (actual time=7.083..7.086 rows=1 loops=1)"
+"  ->  Sort  (cost=1443.41..1443.95 rows=217 width=128) (actual time=7.082..7.083 rows=1 loops=1)"
+"        Sort Key: ((cumulativenumberfor14daysofcovid19casesper100000.cumulative_count)::integer) DESC"
+"        Sort Method: top-N heapsort  Memory: 25kB"
+"        ->  Subquery Scan on cumulativenumberfor14daysofcovid19casesper100000  (cost=1426.59..1442.33 rows=217 width=128) (actual time=6.837..6.979 rows=173 loops=1)"
+"              ->  Group  (cost=1426.59..1439.07 rows=217 width=124) (actual time=6.834..6.935 rows=173 loops=1)"
+"                    Group Key: c.country, c.region, c.population, c.area, c.popdensity, c.coastline, c.netmigration, c.infantmortalityper1000births, c.""gdp$percapita"", c.literacyperc, c.phonesper1000, c.arable, c.crops, c.other, c.climate, c.birthrate, c.deathrate, c.agriculture, c.industry, c.service, d.cumulative_count, d.year_week"
+"                    ->  Sort  (cost=1426.59..1427.14 rows=217 width=124) (actual time=6.833..6.838 rows=173 loops=1)"
+"                          Sort Key: c.country, c.region, c.population, c.area, c.popdensity, c.coastline, c.netmigration, c.infantmortalityper1000births, c.""gdp$percapita"", c.literacyperc, c.phonesper1000, c.arable, c.crops, c.other, c.climate, c.birthrate, c.deathrate, c.agriculture, c.industry, c.service, d.cumulative_count"
+"                          Sort Method: quicksort  Memory: 69kB"
+"                          ->  Hash Join  (cost=10.11..1418.17 rows=217 width=124) (actual time=0.121..6.668 rows=173 loops=1)"
+"                                Hash Cond: ((d.country)::text = (c.country)::text)"
+"                                ->  Seq Scan on datacovid14 d  (cost=0.00..1405.08 rows=217 width=22) (actual time=0.023..6.463 rows=215 loops=1)"
+"                                      Filter: (((indicator)::text = 'cases'::text) AND ((year_week)::text = '2020-31'::text))"
+"                                      Rows Removed by Filter: 43339"
+"                                ->  Hash  (cost=7.27..7.27 rows=227 width=112) (actual time=0.091..0.091 rows=227 loops=1)"
+"                                      Buckets: 1024  Batches: 1  Memory Usage: 42kB"
+"                                      ->  Seq Scan on countrys c  (cost=0.00..7.27 rows=227 width=112) (actual time=0.011..0.050 rows=227 loops=1)"
+"                                            Filter: (country IS NOT NULL)"
+"Planning Time: 0.480 ms"
+"Execution Time: 7.251 ms"
+
+
+Query 2.
+"Limit  (cost=1447.01..1447.04 rows=10 width=128) (actual time=8.153..8.155 rows=10 loops=1)"
+"  ->  Sort  (cost=1447.01..1447.56 rows=217 width=128) (actual time=8.153..8.154 rows=10 loops=1)"
+"        Sort Key: ((cumulativenumberfor14daysofcovid19casesper100000.cumulative_count)::integer)"
+"        Sort Method: top-N heapsort  Memory: 28kB"
+"        ->  Subquery Scan on cumulativenumberfor14daysofcovid19casesper100000  (cost=1426.59..1442.33 rows=217 width=128) (actual time=7.839..8.000 rows=215 loops=1)"
+"              ->  Group  (cost=1426.59..1439.07 rows=217 width=124) (actual time=7.836..7.947 rows=215 loops=1)"
+"                    Group Key: c.country, c.region, c.population, c.area, c.popdensity, c.coastline, c.netmigration, c.infantmortalityper1000births, c.""gdp$percapita"", c.literacyperc, c.phonesper1000, c.arable, c.crops, c.other, c.climate, c.birthrate, c.deathrate, c.agriculture, c.industry, c.service, d.cumulative_count, d.year_week"
+"                    ->  Sort  (cost=1426.59..1427.14 rows=217 width=124) (actual time=7.834..7.842 rows=215 loops=1)"
+"                          Sort Key: c.country, c.region, c.population, c.area, c.popdensity, c.coastline, c.netmigration, c.infantmortalityper1000births, c.""gdp$percapita"", c.literacyperc, c.phonesper1000, c.arable, c.crops, c.other, c.climate, c.birthrate, c.deathrate, c.agriculture, c.industry, c.service, d.cumulative_count"
+"                          Sort Method: quicksort  Memory: 73kB"
+"                          ->  Hash Left Join  (cost=10.11..1418.17 rows=217 width=124) (actual time=0.122..7.303 rows=215 loops=1)"
+"                                Hash Cond: ((d.country)::text = (c.country)::text)"
+"                                ->  Seq Scan on datacovid14 d  (cost=0.00..1405.08 rows=217 width=22) (actual time=0.026..7.082 rows=215 loops=1)"
+"                                      Filter: (((indicator)::text = 'cases'::text) AND ((year_week)::text = '2020-31'::text))"
+"                                      Rows Removed by Filter: 43339"
+"                                ->  Hash  (cost=7.27..7.27 rows=227 width=112) (actual time=0.089..0.089 rows=227 loops=1)"
+"                                      Buckets: 1024  Batches: 1  Memory Usage: 42kB"
+"                                      ->  Seq Scan on countrys c  (cost=0.00..7.27 rows=227 width=112) (actual time=0.008..0.043 rows=227 loops=1)"
+"Planning Time: 0.633 ms"
+"Execution Time: 8.359 ms"
+
+
+
+Query 4.
+
+
+
+Query 3.
+"Limit  (cost=1426.58..1426.60 rows=10 width=128) (actual time=7.821..7.823 rows=10 loops=1)"
+"  ->  Sort  (cost=1426.58..1426.63 rows=20 width=128) (actual time=7.820..7.822 rows=10 loops=1)"
+"        Sort Key: ((top10.cumulative_count)::integer) DESC"
+"        Sort Method: quicksort  Memory: 30kB"
+"        ->  Subquery Scan on top10  (cost=1425.79..1426.14 rows=20 width=128) (actual time=7.769..7.779 rows=20 loops=1)"
+"              ->  Limit  (cost=1425.79..1425.84 rows=20 width=128) (actual time=7.767..7.770 rows=20 loops=1)"
+"                    ->  Sort  (cost=1425.79..1425.98 rows=75 width=128) (actual time=7.767..7.769 rows=20 loops=1)"
+"                          Sort Key: ((cumulativenumberfor14daysofcovid19casesper100000.gdppercapita)::integer) DESC"
+"                          Sort Method: top-N heapsort  Memory: 33kB"
+"                          ->  Subquery Scan on cumulativenumberfor14daysofcovid19casesper100000  (cost=1418.36..1423.80 rows=75 width=128) (actual time=7.498..7.626 rows=179 loops=1)"
+"                                ->  Group  (cost=1418.36..1422.67 rows=75 width=124) (actual time=7.493..7.580 rows=179 loops=1)"
+"                                      Group Key: c.country, c.region, c.population, c.area, c.popdensity, c.coastline, c.netmigration, c.infantmortalityper1000births, c.""gdp$percapita"", c.literacyperc, c.phonesper1000, c.arable, c.crops, c.other, c.climate, c.birthrate, c.deathrate, c.agriculture, c.industry, c.service, d.cumulative_count, d.year_week"
+"                                      ->  Sort  (cost=1418.36..1418.55 rows=75 width=124) (actual time=7.492..7.494 rows=179 loops=1)"
+"                                            Sort Key: c.country, c.region, c.population, c.area, c.popdensity, c.coastline, c.netmigration, c.infantmortalityper1000births, c.""gdp$percapita"", c.literacyperc, c.phonesper1000, c.arable, c.crops, c.other, c.climate, c.birthrate, c.deathrate, c.agriculture, c.industry, c.service, d.cumulative_count"
+"                                            Sort Method: quicksort  Memory: 71kB"
+"                                            ->  Hash Join  (cost=9.35..1416.02 rows=75 width=124) (actual time=0.154..7.277 rows=179 loops=1)"
+"                                                  Hash Cond: ((d.country)::text = (c.country)::text)"
+"                                                  ->  Seq Scan on datacovid14 d  (cost=0.00..1405.08 rows=224 width=22) (actual time=0.037..7.048 rows=224 loops=1)"
+"                                                        Filter: (((indicator)::text = 'cases'::text) AND ((year_week)::text = '2022-02'::text))"
+"                                                        Rows Removed by Filter: 43330"
+"                                                  ->  Hash  (cost=8.40..8.40 rows=76 width=112) (actual time=0.108..0.108 rows=226 loops=1)"
+"                                                        Buckets: 1024  Batches: 1  Memory Usage: 42kB"
+"                                                        ->  Seq Scan on countrys c  (cost=0.00..8.40 rows=76 width=112) (actual time=0.013..0.072 rows=226 loops=1)"
+"                                                              Filter: (length((""gdp$percapita"")::text) > 0)"
+"                                                              Rows Removed by Filter: 1"
+"Planning Time: 0.598 ms"
+"Execution Time: 8.024 ms"
+
+
+
+
+
+Query 5.
+"Aggregate  (cost=3354.35..3354.36 rows=1 width=8) (actual time=45.646..45.647 rows=1 loops=1)"
+"  Filter: (count(*) > 1)"
+"  ->  HashAggregate  (cost=2808.13..3026.62 rows=21849 width=124) (actual time=35.498..44.895 rows=21688 loops=1)"
+"        Group Key: c.country, c.region, c.population, c.area, c.popdensity, c.coastline, c.netmigration, c.infantmortalityper1000births, c.""gdp$percapita"", c.literacyperc, c.phonesper1000, c.arable, c.crops, c.other, c.climate, c.birthrate, c.deathrate, c.agriculture, c.industry, c.service, d.cumulative_count, d.year_week"
+"        ->  Hash Left Join  (cost=10.11..1606.43 rows=21849 width=124) (actual time=0.108..14.341 rows=21777 loops=1)"
+"              Hash Cond: ((d.country)::text = (c.country)::text)"
+"              ->  Seq Scan on datacovid14 d  (cost=0.00..1295.90 rows=21849 width=22) (actual time=0.023..6.471 rows=21777 loops=1)"
+"                    Filter: ((indicator)::text = 'cases'::text)"
+"                    Rows Removed by Filter: 21777"
+"              ->  Hash  (cost=7.27..7.27 rows=227 width=112) (actual time=0.077..0.078 rows=227 loops=1)"
+"                    Buckets: 1024  Batches: 1  Memory Usage: 42kB"
+"                    ->  Seq Scan on countrys c  (cost=0.00..7.27 rows=227 width=112) (actual time=0.009..0.040 rows=227 loops=1)"
+"Planning Time: 11.073 ms"
+"Execution Time: 47.403 ms"
+
+5.
+
+To enrich the information, I could add "Data on hospital and ICU admission rates and current occupancy for COVID-19" 
+and "Data on COVID-19 tests by week and country" it would be important to compare the number of cases with the tests 
+performed by country/region and hospital occupation allowing to analyze the resources that each country has.
+
+
+6.

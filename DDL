@@ -1,0 +1,95 @@
+
+//DDL datacovid14
+CREATE TABLE datacovid14 
+(
+    country	varchar(300),
+    country_code	varchar(300),
+    continent	varchar(300),
+    population	varchar(300),
+    indicator	varchar(300),
+    weekly_count	varchar(300),
+    year_week	varchar(300),
+    rate_14_day	varchar(300),
+    cumulative_count	varchar(300),
+    source	varchar(300),
+    note	varchar(300)
+);
+
+//DDL contrys
+CREATE TABLE countrys 
+(
+    Country	varchar(300),
+    Region	varchar(300),
+    Population	varchar(300),
+    Area 	varchar(300),
+    PopDensity 	varchar(300),
+    Coastline 	varchar(300),
+    Netmigration varchar(300),
+    Infantmortalityper1000births varchar(300),
+    GDP$percapita	varchar(300),
+    Literacyperc varchar(300),
+    Phonesper1000	varchar(300),
+    Arable varchar(300),
+    Crops varchar(300),
+    Other varchar(300),
+    Climate	varchar(300),
+    Birthrate	varchar(300),
+    Deathrate	varchar(300),
+    Agriculture	varchar(300),
+    Industry	varchar(300),
+    Service	varchar(300)
+)
+
+//DDL controltable
+CREATE TABLE controltablecovid14
+  AS (select max(year_week) as year_weak, country , country_code  from datacovid14 group by country_code, country);
+select * from controltablecovid14
+
+
+//DDL View
+create view Cumulativenumberfor14daysofCOVID19casesper100000 as
+	select  c.country ,
+	c.region,
+	c.population,
+	c.area,
+	c.popdensity,
+	c.coastline ,
+	c.netmigration,
+	c.infantmortalityper1000births,
+	c.gdp$percapita as gdppercapita,
+	c.literacyperc,
+	c.phonesper1000,
+	c.arable,
+	c.crops,
+	c.other,
+	c.climate,
+	c.birthrate,
+	c.deathrate,
+	c.agriculture,
+	c.industry,
+	c.service, d.cumulative_count,d.year_week
+	from countrys as c
+	right join datacovid14 as d on c.country = d.country 
+	where d.indicator = 'cases'
+	group by c.country ,
+	c.region,
+	c.population,
+	c.area,
+	c.popdensity,
+	c.coastline ,
+	c.netmigration,
+	c.infantmortalityper1000births,
+	c.gdp$percapita,
+	c.literacyperc,
+	c.phonesper1000,
+	c.arable,
+	c.crops,
+	c.other,
+	c.climate,
+	c.birthrate,
+	c.deathrate,
+	c.agriculture,
+	c.industry,
+	c.service,
+	d.cumulative_count,
+	d.year_week
