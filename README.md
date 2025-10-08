@@ -1,3 +1,6 @@
+# Data Pipeline Architecture
+
+## GitHub View (Mermaid Diagram)
 ```mermaid
 flowchart LR
     A[Synapse Pipeline] --> B[Databricks Job]
@@ -8,3 +11,8 @@ flowchart LR
     C --> G[(dv_reconciliation_log_attributes_summary)]
     D & E & F & G --> H[Power BI Dashboard]
 ```
+
+## Databricks View (Image)
+For Databricks notebooks, use the following image:
+
+![Pipeline Diagram](pipeline_diagram.png)
